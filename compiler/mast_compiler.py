@@ -8,17 +8,7 @@ import operator
 import compiler.mast as mast
 
 from compiler.expression_builder import expr_to_masm
-
-
-class VarInfo(NamedTuple):
-	address: int
-	type_name: str
-	@property
-	def address_str(self):
-		if self.address in range(len(ascii_uppercase)):
-			return '@' + ascii_uppercase[self.address]
-
-		return str(self.address)
+from compiler.namespace import Namespace
 
 
 def _indent_str(string: str, spaces: int = 4) -> str:
@@ -30,26 +20,8 @@ def _remove_comments(string: str) -> str:
 	return re.sub(r'#.*?\n', '', string)
 
 
-def _next_free_address(var_dict: dict[str, VarInfo]) -> int:
-	location = 0
-	while location in map(operator.attrgetter('address'), var_dict.values()):
-		location += 1
-
-	return location
-
-
-def _free_addresses(var_dict: dict[str, VarInfo]) -> list[int]:
-	addresses = map(operator.attrgetter('address'), var_dict.values())
-	free_addrs: list[int] = []
-	for addr in range(0, 64):
-		if addr not in addresses:
-			free_addrs.append(addr)
-
-	return free_addrs
-
-
-def _traverse(parent: mast.MAST, nonlocal_vars: dict[str, VarInfo]) -> str:
-	local_vars: dict[str, VarInfo] = nonlocal_vars.copy()
+def _traverse(parent: mast.MAST, parent_namespace: Namespace | None) -> str:
+	namespace = Namespace(parent_namespace)
 	output_str = ''
 	for child in parent.body:
 		match child:
@@ -70,45 +42,44 @@ def _traverse(parent: mast.MAST, nonlocal_vars: dict[str, VarInfo]) -> str:
 
 
 			case mast.VarDef():
-				location = _next_free_address(local_vars)
-				var_id = child.identifier.value
-				local_vars[var_id] = VarInfo(location, child.type_name)
+				var_name = child.identifier.value
+				namespace.add_identifier(var_name, 'int')
 
 
 			case mast.Expression():
-				masm_instrs = expr_to_masm(child, local_vars, _free_addresses(local_vars))
+				masm_instrs = expr_to_masm(child, namespace)
 				output_str += f'# {child!r}\n'
 				output_str += _indent_str('\n'.join(masm_instrs))
 				output_str += '\n'
 
 
 			case mast.BinOp(mast.Identifier(), mast.Operator('='), mast.Literal()):
-				var_address = child.left.get_addr_str(local_vars)
+				var_address = child.left.get_addr_str(namespace)
 				const = child.right.value
 				output_str += f'SET {var_address} {const}\n'
 
 
 			case mast.BinOp(mast.Identifier(), mast.Operator('='), mast.Identifier()):
-				dest_address = child.left.get_addr_str(local_vars)
-				src_address = child.right.get_addr_str(local_vars)
+				dest_address = child.left.get_addr_str(namespace)
+				src_address = child.right.get_addr_str(namespace)
 				output_str += f'MOV {dest_address} {src_address}\n'
 
 
 			case mast.BinOp(mast.Identifier(), mast.Operator('+='), mast.Literal()):
-				var_address = child.left.get_addr_str(local_vars)
+				var_address = child.left.get_addr_str(namespace)
 				const = child.right.value
 				output_str += f'ADDC {var_address} {const}\n'
 
 
 			case mast.BinOp(mast.Identifier(), mast.Operator('+='), mast.Identifier()):
-				dest_address = child.left.get_addr_str(local_vars)
-				src_address = child.right.get_addr_str(local_vars)
+				dest_address = child.left.get_addr_str(namespace)
+				src_address = child.right.get_addr_str(namespace)
 				output_str += f'ADD {dest_address} {src_address}\n'
 
 
 			case mast.If(mast.Identifier()):
-				condition_addr = child.condition.get_addr_str(local_vars)
-				body_str = _traverse(child, local_vars)
+				condition_addr = namespace[child.condition.value].addr_as_str
+				body_str = _traverse(child, namespace)
 				body_len = len(_remove_comments(body_str).split())
 
 				output_str += f'JZ {condition_addr} @LEN+{body_len + 1}\n'
@@ -117,8 +88,8 @@ def _traverse(parent: mast.MAST, nonlocal_vars: dict[str, VarInfo]) -> str:
 
 
 			case mast.While(mast.Identifier()):
-				condition_addr = child.condition.get_addr_str(local_vars)
-				body_str = _traverse(child, nonlocal_vars | local_vars)
+				condition_addr = namespace[child.condition.value].addr_as_str
+				body_str = _traverse(child, namespace)
 				body_len = len(_remove_comments(body_str).split())
 
 				output_str += f'JZ {condition_addr} @LEN+{body_len + 3}\n'
@@ -128,13 +99,13 @@ def _traverse(parent: mast.MAST, nonlocal_vars: dict[str, VarInfo]) -> str:
 
 			case mast.FunctionDef(name='main'):
 				output_str += f'&MAIN\n'
-				output_str += _indent_str(_traverse(child, {}))
+				output_str += _indent_str(_traverse(child, None))
 				output_str += '\nEND\n'
 
 
 			case mast.FunctionDef():
 				output_str += f'&{child.name}\n'
-				output_str += _indent_str(_traverse(child, {}))
+				output_str += _indent_str(_traverse(child, None))
 				output_str += '\nJMPC @A\n'
 
 			
@@ -146,7 +117,7 @@ def _traverse(parent: mast.MAST, nonlocal_vars: dict[str, VarInfo]) -> str:
 
 
 def compile_mast(root: mast.Root, output_file: Optional[TextIO] = None) -> str:
-	output = _traverse(root, {})
+	output = _traverse(root, None)
 	if output_file is not None:
 		output_file.write(output)
 
