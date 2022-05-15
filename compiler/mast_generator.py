@@ -122,4 +122,4 @@ def generate_mast(file: TextIO):
     return root
 
 
-generate_mast(open("basic.mcom", "r"))
+generate_mast(open("basic.lcom", "r"))
