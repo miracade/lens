@@ -8,9 +8,9 @@ from compiler.mast_compiler import compile_mast
 
 def compile(filename: str, outfilename: str):
     """
-    Compilation of a .mcom file involves two essential steps:
+    Compilation of a .lcom file involves two essential steps:
             1. Generating a MiniMini Abstract Syntax Tree (MAST) from
-                    the .mcom source code.
+                    the .lcom source code.
             2. Compiling the MAST into a .masm file.
 
     """
@@ -23,8 +23,8 @@ def compile(filename: str, outfilename: str):
 
 
 if __name__ == "__main__":
-    compile("basic.mcom", "basic.masm")
-    with open("basic.masm", "r") as file:
+    compile("basic.lcom", "basic.lasm")
+    with open("basic.lasm", "r") as file:
         text = file.read()
         print("-" * 80)
         print(text)

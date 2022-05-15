@@ -8,6 +8,8 @@ import compiler
 import assembler
 from assembler import LOCATION
 
+from _constants import FILE_EXT
+
 pg.font.init()
 
 FONT = pg.font.SysFont("Jetbrains Mono, Consolas", 32)
@@ -96,11 +98,8 @@ def simulate(state: bytearray, fps: int = 5, auto: int = 0):
 
 
 if __name__ == "__main__":
-    # file_name = 'basic.masm'
-    # state = assembler.masm_to_bytecode(open(file_name))
-
-    compiler.compile("basic.mcom", "basic.masm")
-    with open("basic.masm", "r") as file:
+    compiler.compile(f"basic.{FILE_EXT.COMPILABLE}", f"basic.{FILE_EXT.ASSEMBLY}")
+    with open(f"basic.{FILE_EXT.ASSEMBLY}", "r") as file:
         state = assembler.masm_to_bytecode(file)
 
     simulate(state, fps=60, auto=0)

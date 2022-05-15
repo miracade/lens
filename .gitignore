@@ -3,6 +3,12 @@
 *.masm
 *.mbin
 
+# Lens files
+*.lens
+*.lcom
+*.lasm
+*.lbin
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

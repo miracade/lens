@@ -112,7 +112,7 @@ def compile_mast(root: mast.Root, output_file: Optional[TextIO] = None) -> str:
 if __name__ == "__main__":
     from mast_generator import generate_mast
 
-    root = generate_mast(open("basic.mcom", "r"))
+    root = generate_mast(open("basic.lcom", "r"))
     compiled = compile_mast(root)
 
-    print("# COMPILED:\n" + compiled, file=open("basic.masm", "w"))
+    print("# COMPILED:\n" + compiled, file=open("basic.lasm", "w"))

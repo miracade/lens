@@ -106,6 +106,6 @@ class Reader:
 
 
 if __name__ == "__main__":
-    with open("basic.mcom", "r") as file:
+    with open("basic.lcom", "r") as file:
         reader = Reader(file)
         pprint(reader.tokens)
