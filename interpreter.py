@@ -42,6 +42,8 @@ def cycle(state: bytearray) -> int:
             break
         clock_byte -= 1
 
+    state[LOCATION.OUTPUT] = 0x00
+
     instr = read(state)
     match instr:
         # NOP
