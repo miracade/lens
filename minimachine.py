@@ -98,8 +98,10 @@ def simulate(state: bytearray, fps: int = 5, auto: int = 0):
 
 
 if __name__ == "__main__":
-    compiler.compile(f"basic.{FILE_EXT.COMPILABLE.value}", f"basic.{FILE_EXT.ASSEMBLY.value}")
-    with open(f"basic.{FILE_EXT.ASSEMBLY.value}", "r") as file:
+    compilable_ext = FILE_EXT.COMPILABLE.value
+    assembly_ext = FILE_EXT.ASSEMBLY.value
+    compiler.compile(f"basic.{compilable_ext}", f"basic.{assembly_ext}")
+    with open(f"basic.{assembly_ext}", "r") as file:
         state = assembler.masm_to_bytecode(file)
 
     simulate(state, fps=60, auto=0)
