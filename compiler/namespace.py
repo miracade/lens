@@ -97,5 +97,4 @@ class Namespace:
         addr = self.get_free_address()
         var = Var(name, type, addr)
         self.vars.append(var)
-        print(self)
         return var
