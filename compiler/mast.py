@@ -232,6 +232,13 @@ class While(MAST):
             raise MASTError(f"Condition {condition!r} is not alphabetic")
 
 
+class Print(MAST):
+    __match_args__ = ("value",)
+    def __init__(self, value: Literal | Identifier):
+        super().__init__()
+        self.value = value
+
+
 class FunctionDef(MAST):
     def __init__(self, name: str, params: list[str]):
         super().__init__()
@@ -239,3 +246,5 @@ class FunctionDef(MAST):
 
         self.name = name
         self.params = params
+
+

@@ -84,6 +84,22 @@ def _process_token(root: mast.Root, reader: Reader):
             var_def = mast.VarDef(type_name, identifier)
             root.add(var_def)
 
+        # If the token is the literal 'print', the next token is read.
+        # If the next token is alphabetical, it is treated as an identifier.
+        # If the next token is numeric, it is treated as a literal.
+        case "print":
+            printed = reader.read_token()
+            if printed.isalpha():
+                print_ = mast.Print(mast.Identifier(printed))
+            elif printed.isnumeric:
+                print_ = mast.Print(mast.Literal(printed))
+            else:
+                raise CompilerError(
+                    f"Expected {printed!r} in print statement to be alphabetic or numeric"
+                )
+
+            root.add(print_)
+
         # If the token is alphabetic but does not meet any of the
         # above criteria, it is assumed to be an identifier.
         case token if token.isalpha():

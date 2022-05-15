@@ -85,6 +85,14 @@ def _traverse(parent: mast.MAST, parent_namespace: Namespace | None) -> str:
                 output_str += _indent_str(body_str)
                 output_str += f"JMPC @LEN-{body_len + 4}\n"
 
+            case mast.Print(mast.Identifier()):
+                identifier = child.value
+                output_str += f"OUT {namespace[identifier.value].addr_as_str}\n"
+
+            case mast.Print(mast.Literal()):
+                literal = child.value
+                output_str += f"OUTC {literal.value}\n"
+
             case mast.FunctionDef(name="main"):
                 output_str += f"&MAIN\n"
                 output_str += _indent_str(_traverse(child, None))
