@@ -60,6 +60,9 @@ class INSTR(enum.IntEnum):
     # ANDC = 0x35
     # INV = 0x36
 
+    IN = 0x40
+    OUT = 0x48
+
 
 def masm_to_bytecode(file: TextIO):
     macros = {char: index for index, char in enumerate(ascii_uppercase)}

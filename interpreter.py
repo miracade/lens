@@ -104,6 +104,8 @@ def cycle(state: bytearray) -> int:
             dest = read(state)
             set_instr_ptr(state, dest)
 
+        # <INSTR> <addr>
+        # Conditional jump to the (absolute) address at <addr>
         case (INSTR.JZ | INSTR.JNZ | INSTR.JPOS | INSTR.JNEG):
             condition = read_rel(state)
             dest = read(state)
@@ -116,21 +118,29 @@ def cycle(state: bytearray) -> int:
             if predicates[instr](state[condition]):
                 set_instr_ptr(state, dest)
 
+        # JCARRY <addr>
+        # Jump to the absolute address at <addr> if the carry flag is set
         case INSTR.JCARRY:
             dest = read(state)
             if state[LOCATION.FLAG_CARRY]:
                 set_instr_ptr(state, dest)
 
+        # JCARRY <addr>
+        # Jump to the absolute address at <addr> unless the carry flag is set
         case INSTR.JNCARRY:
             dest = read(state)
             if not state[LOCATION.FLAG_CARRY]:
                 set_instr_ptr(state, dest)
 
+        # ADD <dest> <src>
+        # Adds the value at relative address <src> to relative address <dest>
         case INSTR.ADD:
             dest = read_rel(state)
             src = read_rel(state)
             add(state, dest, state[src])
 
+        # ADD <dest> <src_const>
+        # Adds the constant <src_const> to relative address <dest>
         case INSTR.ADDC:
             dest = read_rel(state)
             src_const = read(state)
@@ -163,6 +173,14 @@ def cycle(state: bytearray) -> int:
         case INSTR.DEC:
             addr = read_rel(state)
             add(state, addr, -1)
+
+        case INSTR.IN:
+            dest = read_rel(state)
+            state[dest] = state[LOCATION.INPUT]
+
+        case INSTR.OUT:
+            src = read_rel(state)
+            state[LOCATION.OUTPUT] = state[src]
 
         case _:
             raise InterpreterError(f"Unknown instruction: {instr}")
