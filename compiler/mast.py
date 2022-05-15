@@ -234,6 +234,7 @@ class While(MAST):
 
 class Print(MAST):
     __match_args__ = ("value",)
+
     def __init__(self, value: Literal | Identifier):
         super().__init__()
         self.value = value
@@ -246,5 +247,3 @@ class FunctionDef(MAST):
 
         self.name = name
         self.params = params
-
-
