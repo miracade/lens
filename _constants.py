@@ -8,6 +8,6 @@ class FILE_EXT(Enum):
     Enum for the file extensions used by Lens.
     """
 
-    COMPILABLE = ".lcom"
-    ASSEMBLY = ".lasm"
-    BYTECODE = ".lbin"
+    COMPILABLE = "lcom"
+    ASSEMBLY = "lasm"
+    BYTECODE = "lbin"
