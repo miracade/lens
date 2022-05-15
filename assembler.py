@@ -62,6 +62,7 @@ class INSTR(enum.IntEnum):
 
     IN = 0x40
     OUT = 0x48
+    OUTC = 0x49
 
 
 def masm_to_bytecode(file: TextIO):

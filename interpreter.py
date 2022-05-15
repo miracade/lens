@@ -184,6 +184,10 @@ def cycle(state: bytearray) -> int:
             src = read_rel(state)
             state[LOCATION.OUTPUT] = state[src]
 
+        case INSTR.OUTC:
+            src_const = read(state)
+            state[LOCATION.OUTPUT] = src_const
+
         case _:
             raise InterpreterError(f"Unknown instruction: {instr}")
 
