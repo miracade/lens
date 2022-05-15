@@ -1,0 +1,35 @@
+
+>>> print_identifiers passes 0 5 0 7 0 255
+def main()
+{
+	int i
+	int j
+
+	i = 5; print i
+	i = 7; print i
+
+	int j
+	j = 255; print j
+}
+
+>>> print_invalid_identifiers fails
+def main()
+{
+	int i
+	print j
+}
+
+>>> print_literals passes 0 3 0 8
+def main()
+{
+	print 0
+	print 3
+	print 0
+	print 8
+}
+
+>>> print_invalid_symbols fails
+def main()
+{
+	print {}
+}
