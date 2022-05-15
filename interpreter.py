@@ -167,4 +167,4 @@ def cycle(state: bytearray) -> int:
         case _:
             raise InterpreterError(f"Unknown instruction: {instr}")
 
-    return 1
+    return state[LOCATION.OUTPUT]

@@ -11,8 +11,11 @@ class LOCATION(enum.IntEnum):
     FLAG_CARRY = 0x02
     CLOCK_START = 0x04
     CLOCK_END = 0x07
-    HEAPFLAG_START = 0x08
+    INPUT = 0x08
+    OUTPUT = 0x09
+    HEAPFLAG_START = 0x0A
     HEAPFLAG_END = 0x0F
+    HEADER_END = 0x0F
 
     HEAP_START = 0x80
     HEAP_END = 0xFF
@@ -60,7 +63,7 @@ class INSTR(enum.IntEnum):
 
 def masm_to_bytecode(file: TextIO):
     macros = {char: index for index, char in enumerate(ascii_uppercase)}
-    bytecode = bytearray([0x00] * 16)
+    bytecode = bytearray([0x00] * LOCATION.HEADER_END)
     for line in file:
         for word in line.split():
             macros["LEN"] = len(bytecode)
