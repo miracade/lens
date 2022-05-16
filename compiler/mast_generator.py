@@ -117,11 +117,10 @@ def _process_token(root: mast.Root, reader: Reader):
             # operation = mast.BinOp(left, operator, right)
             # root.add(operation)
 
-        # The token has not been recognized. Print a warning to the
-        # console
+        # The token has not been recognized. Raise an error
         case _:
-            print(f"WARN: Unidentified word: {token!r}")
-            # raise CompilationError(f'Unknown word: {unidentified!r}')
+            # print(f"WARN: Unidentified word: {token!r}")
+            raise CompilerError(f'Unknown token: {token!r}')
 
 
 def generate_mast(file: TextIO):
