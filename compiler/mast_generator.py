@@ -120,7 +120,7 @@ def _process_token(root: mast.Root, reader: Reader):
         # The token has not been recognized. Raise an error
         case _:
             # print(f"WARN: Unidentified word: {token!r}")
-            raise CompilerError(f'Unknown token: {token!r}')
+            raise CompilerError(f"Unknown token: {token!r}")
 
 
 def generate_mast(file: TextIO):
