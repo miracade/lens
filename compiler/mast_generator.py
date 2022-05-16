@@ -101,21 +101,11 @@ def _process_token(root: mast.Root, reader: Reader):
             root.add(print_)
 
         # If the token is alphabetic but does not meet any of the
-        # above criteria, it is assumed to be an identifier.
+        # above criteria, the statement is assumed to be an expression.
         case token if token.isalpha():
             expr_tokens = [token] + reader.read_until_separator()
             expr = build_expression(expr_tokens)
             root.add(expr)
-            # left = mast.Identifier(token)
-            # operator = mast.Operator(reader.read_token())
-            # right = reader.read_token()
-            # if right.isnumeric():
-            # 	right = mast.Literal(right)
-            # elif right.isalpha():
-            # 	right = mast.Identifier(right)
-
-            # operation = mast.BinOp(left, operator, right)
-            # root.add(operation)
 
         # The token has not been recognized. Raise an error
         case _:
