@@ -1,0 +1,16 @@
+
+>>> declaration concludes
+def main() { int a; }
+
+>>> declaration_and_assignment concludes 7
+def main() { int a; a = 7; }
+
+>>> decl_with_non_alpha_identifier fails
+def main() { int a6; }
+
+>>> repeat_declaration fails
+def main()
+{
+	int a;
+	int a;
+}

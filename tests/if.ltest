@@ -1,0 +1,73 @@
+
+>>> if_with_zero_identifier concludes 0 0
+def main()
+{
+	int a; a = 0
+	int b; b = 0
+
+	if a { b = 1; }
+}
+
+>>> if_with_nonzero_identifier concludes 5 1
+def main()
+{
+	int a; a = 5
+	int b; b = 0
+
+	if a { b = 1; }
+}
+
+>>> if_no_conditional fails
+def main()
+{
+	if { int a; }
+}
+
+>>> if_empty_block concludes 5
+def main()
+{
+	int a
+	a = 5
+	if a {}
+}
+
+>>> use_nonlocal_vars_inside_if concludes 5 10
+def main()
+{
+	int a; a = 5
+	int b;
+	if a
+	{
+		b = a + 5;
+	}
+}
+
+>>> create_local_vars_inside_if concludes 3 5 7
+def main()
+{
+	int a; a = 3
+	if a
+	{
+		int b; b = 5
+		int c; c = 7
+	}
+}
+
+>>> local_vars_inaccessible_after_if fails
+def main()
+{
+	int a; a = 5
+	if a
+	{
+		int b; b = 5
+	}
+	b = 7
+}
+
+>>> nonlocal_vars_accessible_after_if concludes 9 7
+def main()
+{
+	int a; a = 5
+	if a { int b; b = 7; }
+	a = 9
+}
