@@ -1,10 +1,8 @@
 # mast_compiler.py
 
-from string import ascii_uppercase
-from typing import Iterator, NamedTuple, Optional, TextIO
+from typing import Optional, TextIO
 import re
 
-import operator
 import compiler.mast as mast
 
 from compiler.expression_builder import expr_to_masm
@@ -12,15 +10,30 @@ from compiler.namespace import Namespace
 
 
 def _indent_str(string: str, spaces: int = 4) -> str:
+    """
+    Indents a string by the given number of spaces.
+    """
     indent = " " * spaces
     return indent + string.replace("\n", "\n" + indent)
 
 
 def _remove_comments(string: str) -> str:
+    """
+    Given a string, removes all comments from it. A comment is
+    defined as any substring starting with a '#' and ending with
+    a newline ('\n').
+    """
     return re.sub(r"#.*?\n", "", string)
 
 
 def _traverse(parent: mast.MAST, parent_namespace: Namespace | None) -> str:
+    """
+    Given a MAST with a body, compiles the body into machine code
+    and return it as a string.
+
+    The optional parameter 'parent_namespace' can be used to inform the
+    compiler about nonlocal variables (such as when compiling an if statement).
+    """
     namespace = Namespace(parent_namespace)
     output_str = ""
     for child in parent.body:
