@@ -29,7 +29,7 @@ def run_test_file(test_path: Path):
         text = file.read()
 
     # Split by ">>>" to get the test cases. Ignore all text before
-    # the first test case"
+    # the first test case
     tests = text.split(">>>")[1:]
 
     # Run each test
@@ -40,7 +40,7 @@ def run_test_file(test_path: Path):
         # Split the header line by whitespace to get the test title and
         # expectation (either "outputs" or "fails")
         header = header.strip().split()
-        title = f"{header[0]:<30}"
+        title = f"{header[0]:<40}"
         expectation = header[1]
 
         # Write the test code to "_test.lcom"
